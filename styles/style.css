@@ -1,0 +1,214 @@
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+h1, h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+h3 {
+     margin-top: 0; 
+}
+
+h4 {
+    margin-bottom: 0.5em;
+    color: #444;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+
+#add-room-section {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+#add-room-section input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+#add-room-section button, .action-button { 
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#add-room-section button:hover, .action-button:hover {
+    background-color: #0056b3;
+}
+
+#rooms-list {
+    margin-top: 20px;
+}
+
+.room-entry {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.room-header h3 {
+    margin: 0;
+    color: #333; 
+    font-size: 1.4em;
+}
+
+.new-measurement-section {
+    background-color: #f9f9f9; 
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+}
+
+.measurement-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.measurement-inputs label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.measurement-inputs input[type="text"],
+.measurement-inputs input[type="number"],
+.measurement-inputs input[type="date"],
+.measurement-inputs input[type="time"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+.new-measurement-section .action-button { 
+   display: block; 
+   width: fit-content; 
+   margin: 0 auto; 
+}
+
+
+.recorded-measurements-section {
+    margin-top: 15px;
+}
+
+.recorded-measurements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.measurement-item {
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; 
+    gap: 15px; 
+    font-size: 0.95em;
+}
+
+.measurement-item-details {
+    flex-grow: 1; 
+}
+
+.measurement-timestamp {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    display: block; 
+    font-size: 0.9em;
+}
+
+.measurement-values span {
+    display: inline-block; 
+    margin-right: 15px;
+    color: #333;
+    font-size: 0.9em;
+    white-space: nowrap; 
+}
+.measurement-values span strong {
+    color: #666; 
+}
+
+
+.delete-button { 
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.3s ease;
+    white-space: nowrap; 
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+.delete-room-button {
+    margin-left: 10px; 
+     font-size: 0.9em; 
+     padding: 6px 12px;
+}
+
+.delete-measurement-button {
+   align-self: center; 
+}
+
+.no-measurements-message {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+#no-rooms-message { 
+     margin-top: 20px;
+}
