@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Wi-Fi Tracker</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <h1>Home Wi-Fi Tracker</h1>
+
+    <div id="add-room-section">
+        <h2>Adicionar Quarto</h2>
+        <input type="text" id="new-room-name" placeholder="Informe o nome do quarto (ex: Cozinha)">
+        <button id="add-room-button">Adicionar</button>
+    </div>
+
+    <div id="rooms-list">
+        <h2>Seus Quartos</h2>
+        <p id="no-rooms-message" style="text-align: center; color: #777; display: none;">Nenhum quarto encontrado!</p>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "date-fns": "https://cdn.jsdelivr.net/npm/date-fns@3.6.0/+esm"
+            }
+        }
+    </script>
+    <script type="module" src="scripts/script.js"></script>
+</body>
+</html>
