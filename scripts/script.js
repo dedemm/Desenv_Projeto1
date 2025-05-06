@@ -31,8 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const measurementId = measurementItem.dataset.measurementId;
                 deleteMeasurement(roomId, measurementId);
             }
+        } else if (target.classList.contains('edit-measurement-button')) {
+            const measurementItem = target.closest('.measurement-item');
+            if (measurementItem) {
+                const measurementId = measurementItem.dataset.measurementId;
+                editMeasurement(roomId, measurementId, roomEntry);
+            }
         } else if (target.classList.contains('delete-room-button')) {
-             deleteRoom(roomId);
+            deleteRoom(roomId);
         }
     });
 
@@ -67,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const room = rooms[roomIndex];
         const newMeasurementSection = roomEntryElement.querySelector('.new-measurement-section');
+        const saveButton = newMeasurementSection.querySelector('.save-new-measurement-button');
+        const isEditing = saveButton.dataset.editingMeasurementId;
 
         const dateInput = newMeasurementSection.querySelector('input[name="measurement-date"]');
         const timeInput = newMeasurementSection.querySelector('input[name="measurement-time"]');
@@ -79,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateValue = dateInput.value;
         const timeValue = timeInput.value;
 
-        // --- Validation for Date and Time ---
         if (!dateValue || !timeValue) {
             alert('Informe uma data e horario para registrar a medição.');
             return;
@@ -93,34 +100,62 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const newMeasurement = {
-            id: Date.now().toString(),
-            timestamp: measurementDate.toISOString(),
-            values: {
-                speed24: speed24Input.value.trim(),
-                speed5: speed5Input.value.trim(),
-                interference: interferenceInput.value.trim(),
-                signal24: signal24Input.value.trim(),
-                signal5: signal5Input.value.trim()
-            }
-        };
+        const allMeasurementValues = [
+            speed24Input.value.trim(),
+            speed5Input.value.trim(),
+            interferenceInput.value.trim(),
+            signal24Input.value.trim(),
+            signal5Input.value.trim()
+        ];
 
-        const allMeasurementValues = Object.values(newMeasurement.values);
         if (allMeasurementValues.every(val => val === '')) {
-             alert('Inserir ao menos 1 medida (Velocidade, Interferencia ou Sinal).');
-             return;
+            alert('Inserir ao menos 1 medida (Velocidade, Interferencia ou Sinal).');
+            return;
         }
 
+        if (isEditing) {
+            const measurementIndex = room.measurementSets.findIndex(m => m.id === isEditing);
+            if (measurementIndex !== -1) {
+                room.measurementSets[measurementIndex] = {
+                    id: isEditing,
+                    timestamp: measurementDate.toISOString(),
+                    values: {
+                        speed24: speed24Input.value.trim(),
+                        speed5: speed5Input.value.trim(),
+                        interference: interferenceInput.value.trim(),
+                        signal24: signal24Input.value.trim(),
+                        signal5: signal5Input.value.trim()
+                    }
+                };
+                alert('Medição atualizada com sucesso!');
+            }
+        } else {
+            const newMeasurement = {
+                id: Date.now().toString(),
+                timestamp: measurementDate.toISOString(),
+                values: {
+                    speed24: speed24Input.value.trim(),
+                    speed5: speed5Input.value.trim(),
+                    interference: interferenceInput.value.trim(),
+                    signal24: signal24Input.value.trim(),
+                    signal5: signal5Input.value.trim()
+                }
+            };
+            room.measurementSets.push(newMeasurement);
+            alert('Medição salva com sucesso!');
+        }
 
-        room.measurementSets.push(newMeasurement);
-        room.measurementSets.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
-
+        room.measurementSets.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         saveRooms();
+
+        const heading = newMeasurementSection.querySelector('h4');
+        heading.textContent = 'Adicionar nova medição';
+        heading.classList.remove('editing-heading');
 
         renderRecordedMeasurements(room, roomEntryElement);
 
         const now = new Date();
-        dateInput.value = format(now, 'yyyy-MM-dd'); 
+        dateInput.value = format(now, 'yyyy-MM-dd');
         timeInput.value = format(now, 'HH:mm');
         speed24Input.value = '';
         speed5Input.value = '';
@@ -128,7 +163,42 @@ document.addEventListener('DOMContentLoaded', () => {
         signal24Input.value = '';
         signal5Input.value = '';
 
-        alert('Medição salva com sucesso!');
+        if (isEditing) {
+            saveButton.textContent = 'Salvar medição';
+            delete saveButton.dataset.editingMeasurementId;
+        }
+    }
+
+    function editMeasurement(roomId, measurementId, roomEntryElement) {
+        const room = rooms.find(room => room.id === roomId);
+        if (!room) return;
+
+        const measurement = room.measurementSets.find(m => m.id === measurementId);
+        if (!measurement) return;
+
+        const measurementDate = new Date(measurement.timestamp);
+        const formattedDate = format(measurementDate, 'yyyy-MM-dd');
+        const formattedTime = format(measurementDate, 'HH:mm');
+
+        const newMeasurementSection = roomEntryElement.querySelector('.new-measurement-section');
+        
+        const heading = newMeasurementSection.querySelector('h4');
+        heading.textContent = 'Editando medição';
+        heading.classList.add('editing-heading');
+        
+        newMeasurementSection.querySelector('input[name="measurement-date"]').value = formattedDate;
+        newMeasurementSection.querySelector('input[name="measurement-time"]').value = formattedTime;
+        newMeasurementSection.querySelector('input[name="speed24"]').value = measurement.values.speed24 || '';
+        newMeasurementSection.querySelector('input[name="speed5"]').value = measurement.values.speed5 || '';
+        newMeasurementSection.querySelector('input[name="interference"]').value = measurement.values.interference || '';
+        newMeasurementSection.querySelector('input[name="signal24"]').value = measurement.values.signal24 || '';
+        newMeasurementSection.querySelector('input[name="signal5"]').value = measurement.values.signal5 || '';
+
+        const saveButton = newMeasurementSection.querySelector('.save-new-measurement-button');
+        saveButton.textContent = 'Atualizar medição';
+        saveButton.dataset.editingMeasurementId = measurementId;
+
+        newMeasurementSection.scrollIntoView({ behavior: 'smooth' });
     }
 
     function deleteMeasurement(roomId, measurementId) {
@@ -138,16 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const room = rooms[roomIndex];
         const measurementIndex = room.measurementSets.findIndex(m => m.id === measurementId);
         if (measurementIndex === -1) return;
-         // if (!confirm('Deseja mesmo excluir a medição?')) {
-         //     return;
-         // }
 
         room.measurementSets.splice(measurementIndex, 1);
         saveRooms();
 
         const roomEntryElement = roomsListDiv.querySelector(`.room-entry[data-room-id="${roomId}"]`);
         if (roomEntryElement) {
-             renderRecordedMeasurements(room, roomEntryElement);
+            renderRecordedMeasurements(room, roomEntryElement);
         } else {
             renderRoomsList();
         }
@@ -159,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const roomName = rooms[roomIndex].name;
         if (confirm(`Deseja mesmo deletar o quarto "${roomName}" junto com suas medições?`)) {
-            rooms.splice(roomIndex, 1); 
+            rooms.splice(roomIndex, 1);
             saveRooms();
             const roomElement = roomsListDiv.querySelector(`.room-entry[data-room-id="${roomId}"]`);
             if (roomElement) {
@@ -203,11 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label for="speed5-new-${room.id}">Velocidade (5GHz, Mbps):</label>
                         <input type="number" id="speed5-new-${room.id}" name="speed5" placeholder="ex: 300">
                     </div>
-                     <div class="measurement-group">
+                    <div class="measurement-group">
                         <label for="signal24-new-${room.id}">Nivel do Sinal (2.4GHz, dBm):</label>
                         <input type="number" id="signal24-new-${room.id}" name="signal24" placeholder="ex: -65">
                     </div>
-                     <div class="measurement-group">
+                    <div class="measurement-group">
                         <label for="signal5-new-${room.id}">Nivel do Sinal (5GHz, dBm):</label>
                         <input type="number" id="signal5-new-${room.id}" name="signal5" placeholder="ex: -55">
                     </div>
@@ -223,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h4>Medições salvas</h4>
                 <ul class="recorded-measurements-list">
                 </ul>
-                 <p class="no-measurements-message" style="display: none;">Nenhuma medição foi encontrada!</p>
+                <p class="no-measurements-message" style="display: none;">Nenhuma medição foi encontrada!</p>
             </div>
         `;
 
@@ -236,10 +303,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderRecordedMeasurements(room, roomEntryElement) {
         const listElement = roomEntryElement.querySelector('.recorded-measurements-list');
         const noMeasurementsMsg = roomEntryElement.querySelector('.no-measurements-message');
-        listElement.innerHTML = ''; 
+        listElement.innerHTML = '';
 
         if (room.measurementSets.length === 0) {
-            noMeasurementsMsg.style.display = 'block'; 
+            noMeasurementsMsg.style.display = 'block';
         } else {
             noMeasurementsMsg.style.display = 'none';
             room.measurementSets.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -248,14 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.classList.add('measurement-item');
                 item.dataset.measurementId = measurement.id;
 
-                let formattedTimestamp = 'Data invalida!';
                 const measurementDate = new Date(measurement.timestamp).toLocaleString('pt-BR');
-                // if (isValid(measurementDate)) {
-                //    formattedTimestamp = format(measurementDate, 'PPpp', { locale: ptBR });
-                // } else {
-                //     console.warn("Timestamp invalida:", measurement.timestamp);
-                // }
-
                 const getValue = (val) => escapeHTML(val || '-');
 
                 item.innerHTML = `
@@ -269,7 +329,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span><strong>Interferência:</strong> ${getValue(measurement.values.interference)}</span>
                         </div>
                     </div>
-                    <button class="delete-button delete-measurement-button" title="Deletar medicao">Deletar</button>
+                    <div class="measurement-actions">
+                        <button class="edit-button edit-measurement-button" title="Editar medição">Editar</button>
+                        <button class="delete-button delete-measurement-button" title="Deletar medicao">Deletar</button>
+                    </div>
                 `;
                 listElement.appendChild(item);
             });
@@ -281,9 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
         existingEntries.forEach(entry => entry.remove());
 
         if (rooms.length > 0) {
-            rooms.forEach(renderRoom); 
+            rooms.forEach(renderRoom);
         }
-        toggleNoRoomsMessage(); 
+        toggleNoRoomsMessage();
     }
 
     function toggleNoRoomsMessage() {
@@ -304,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const parsedData = JSON.parse(savedData);
                 if (Array.isArray(parsedData)) {
-                     parsedData.forEach(room => {
+                    parsedData.forEach(room => {
                         if (room.measurementSets && Array.isArray(room.measurementSets)) {
                             room.measurementSets.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                             room.measurementSets.forEach(m => {
@@ -316,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
                             });
                         } else {
-                            room.measurementSets = []; 
+                            room.measurementSets = [];
                         }
                     });
                     return parsedData;
@@ -325,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(e);
             }
         }
-        return []; 
+        return [];
     }
 
     function escapeHTML(str) {
@@ -333,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.appendChild(document.createTextNode(String(str)));
         return div.innerHTML;
-     }
+    }
 
     renderRoomsList();
 });

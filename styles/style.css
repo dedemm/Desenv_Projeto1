@@ -12,7 +12,7 @@ h1, h2 {
 }
 
 h3 {
-     margin-top: 0; 
+    margin-top: 0; 
 }
 
 h4 {
@@ -21,7 +21,6 @@ h4 {
     border-bottom: 1px solid #eee;
     padding-bottom: 5px;
 }
-
 
 #add-room-section {
     background-color: #fff;
@@ -120,11 +119,10 @@ h4 {
 }
 
 .new-measurement-section .action-button { 
-   display: block; 
-   width: fit-content; 
-   margin: 0 auto; 
+    display: block; 
+    width: fit-content; 
+    margin: 0 auto; 
 }
-
 
 .recorded-measurements-section {
     margin-top: 15px;
@@ -144,34 +142,59 @@ h4 {
     border-radius: 6px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; 
-    gap: 15px; 
+    align-items: flex-start;
+    gap: 15px;
     font-size: 0.95em;
 }
 
 .measurement-item-details {
-    flex-grow: 1; 
+    flex-grow: 1;
 }
 
 .measurement-timestamp {
     font-weight: bold;
     color: #555;
     margin-bottom: 8px;
-    display: block; 
+    display: block;
     font-size: 0.9em;
 }
 
+.measurement-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 15px;
+}
+
 .measurement-values span {
-    display: inline-block; 
-    margin-right: 15px;
     color: #333;
     font-size: 0.9em;
-    white-space: nowrap; 
 }
+
 .measurement-values span strong {
     color: #666; 
 }
 
+.measurement-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.edit-button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.edit-button:hover {
+    background-color: #218838;
+}
 
 .delete-button { 
     padding: 5px 10px;
@@ -190,13 +213,9 @@ h4 {
 }
 
 .delete-room-button {
-    margin-left: 10px; 
-     font-size: 0.9em; 
-     padding: 6px 12px;
-}
-
-.delete-measurement-button {
-   align-self: center; 
+    margin-left: 10px;
+    font-size: 0.9em;
+    padding: 6px 12px;
 }
 
 .no-measurements-message {
@@ -210,5 +229,5 @@ h4 {
 }
 
 #no-rooms-message { 
-     margin-top: 20px;
+    margin-top: 20px;
 }
